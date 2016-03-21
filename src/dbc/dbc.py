@@ -46,9 +46,9 @@ if __name__ == '__main__':
     central['supplement'] = supplement
     central['active'] = []
 
-    max = central['activeSize']
+    maxCount = central['activeSize']
     count = 0
-    while count < max:
+    while count < maxCount:
         card = central['deck'].pop()
         central['active'].append(card)
         count = count + 1
@@ -79,10 +79,10 @@ if __name__ == '__main__':
 
 
 
-    pG = raw_input('Do you want to play a game?:')
-    cG = (pG=='Y')
+    pG = raw_input('Do you want to play a game? y/N(default y):')
+    cG = (pG.lower()=='y' or pG=='')
     oT = raw_input("Do you want an aggressive (A) opponent or an acquisative (Q) opponent")
-    aggressive = (oT=='A')
+    aggressive = (oT.lower()=='a')
     while cG:
         money = 0
         attack = 0
@@ -164,7 +164,7 @@ if __name__ == '__main__':
                         break;
                     elif bv.isdigit():
                         if int(bv) < len(central['active']):
-                             if money >= central['active'][int(bv)].cost:
+                            if money >= central['active'][int(bv)].cost:
                                 money = money - central['active'][int(bv)].cost
                                 pO['discard'].append(central['active'].pop(int(bv)))
                                 if( len(central['deck']) > 0):
@@ -173,10 +173,10 @@ if __name__ == '__main__':
                                 else:
                                     central['activeSize'] = central['activeSize'] - 1
                                 print "Card bought"
-                             else:
+                            else:
                                 print "insufficient money to buy"
                         else:
-                             print "enter a valid index number"
+                            print "enter a valid index number"
                     else:
                         print "Enter a valid option"
 
@@ -332,11 +332,11 @@ if __name__ == '__main__':
                     print "Draw"
             cG = False
         if not cG:
-            pG = raw_input("\nDo you want to play another game?:")
-            cG = (pG=='Y')
+            pG = raw_input("\nDo you want to play another game?: y/N (default:y)")
+            cG = (pG.lower()=='y' or pG=='')
             if cG:
                 oT = raw_input("Do you want an aggressive (A) opponent or an acquisative (Q) opponent")
-                aggressive = (oT=='A')
+                aggressive = (oT.lower()=='a')
                 pO = {'name': 'player one', 'health': 30, 'deck': None, 'hand': None, 'active': None,
                              'handsize': 5,
                              'discard': None}
@@ -404,9 +404,9 @@ if __name__ == '__main__':
 
 
                 print "Available Cards"
-                max = central['activeSize']
+                maxCount = central['activeSize']
                 count = 0
-                while count < max:
+                while count < maxCount:
                     print central['active'][count]
                     count = count + 1
 
