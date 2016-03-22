@@ -1,5 +1,22 @@
 import itertools, random
+import time
 
+class Player(object):
+    
+    def __init__(self, name, health=30, handsize=5, deck=[], hand=[], discard=[], active=[]):
+        self.name = name
+        self.health = health
+        self.handsize = handsize
+        self.deck = deck
+        self.hand = hand
+        self.discard = discard
+        self.active = active
+
+#class playerOne(Player):
+    
+        
+    
+            
 class Card(object):
     def __init__(self, name, values=(0, 0), cost=1, clan=None):
         self.name = name
@@ -14,13 +31,10 @@ class Card(object):
             return self.values[1]
 
 
-if __name__ == '__main__':
-    pO = {'name': 'player one', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
-                 'discard': None}
-    pC = {'name': 'player computer', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
-               'discard': None}
-    central = {'name': 'central', 'active': None, 'activeSize': 5, 'supplement': None, 'deck': None}
+def initData(pO,pC,central):
+
     sdc = [4 * [Card('Archer', (3, 0), 2)], 4 * [Card('Baker', (0, 3), 2)], 3 * [Card('Swordsman', (4, 0), 3)], 2 * [Card('Knight', (6, 0), 5)],3 * [Card('Tailor', (0, 4), 3)],3 * [Card('Crossbowman', (4, 0), 3)],3 * [Card('Merchant', (0, 5), 4)],4 * [Card('Thug', (2, 0), 1)],4 * [Card('Thief', (1, 1), 1)],2 * [Card('Catapault', (7, 0), 6)], 2 * [Card('Caravan', (1, 5), 5)],2 * [Card('Assassin', (5, 0), 4)]]
+    
     playeronedeck = [8 * [Card('Serf', (0, 1), 0)],
                      2 * [Card('Squire', (1, 0), 0)]
                      ]
@@ -29,6 +43,7 @@ if __name__ == '__main__':
     pO['hand'] = []
     pO['discard'] = []
     pO['active'] = []
+    
     playertwodeck = [
             8 * [Card('Serf', (0, 1), 0)],
         2 * [Card('Squire', (1, 0), 0)]
@@ -45,7 +60,7 @@ if __name__ == '__main__':
     central['deck'] = deck
     central['supplement'] = supplement
     central['active'] = []
-
+    
     maxCount = central['activeSize']
     count = 0
     while count < maxCount:
@@ -53,21 +68,84 @@ if __name__ == '__main__':
         central['active'].append(card)
         count = count + 1
 
-    for x in range(0, pO['handsize']):
-        if (len(pO['deck']) == 0):
-            random.shuffle(pO['discard'])
-            pO['deck'] = pO['discard']
-            pO['discard'] = []
-        card = pO['deck'].pop()
-        pO['hand'].append(card)
+def deck2hand(player):
+    
+    for x in range(0, player['handsize']):
+        if (len(player['deck']) == 0):
+            random.shuffle(player['discard'])
+            player['deck'] = player['discard']
+            player['discard'] = []
+        card = player['deck'].pop()
+        player['hand'].append(card)
 
-    for x in range(0, pO['handsize']):
-        if len(pC['deck']) == 0:
-            random.shuffle(pO['discard'])
-            pC['deck'] = pC['discard']
-            pC['discard'] = []
-        card = pC['deck'].pop()
-        pC['hand'].append(card)
+# the flag indicate the whether it is the first time playing game
+
+def checkInput(flag):
+    
+    cG = False
+    aggressive = False
+    
+    if flag:
+        str_prompt = '\n Do you want to play a game? y/N (default y):'
+    else:
+        str_prompt = '\n Do you want to play another game? y/N (default:y):'     
+    
+    while(True):
+        pG = raw_input(str_prompt)
+        if(pG.lower()=='y' or pG==''):
+            cG = True
+            break
+        elif(pG.lower()=='n'):
+            cG = False
+            break
+        else:
+            print 'your input is ',pG,' it is not recognized, please try again, just type y or n '
+            continue
+    
+    if not cG:
+        print '\n You have choose no, so the game will quit '
+        return cG,aggressive
+    
+    str_prompt = "\n Do you want an aggressive (A) opponent or an acquisitive (Q) opponent? A/Q (defalut:A): "
+    while(True):
+        oT = raw_input(str_prompt)
+        if(oT.lower()=='a' or oT==''):
+            aggressive = True
+            break
+        elif(oT.lower()=='q'):
+            aggressive = False
+            break
+        else:
+            print 'your input is ',oT,' it is not recognized, please try again, just type A or Q '
+            continue
+        
+    str_oppo = 'aggressive' if aggressive else 'acquisitive'
+    print '\n Welcome Deck Card Game! you have choose an ',str_oppo, ' opponent'
+    time.sleep(2)
+    return cG,aggressive
+    
+if __name__ == '__main__':
+    
+    '''
+    define three game roles
+        pO: the player one
+        pC: the player computer
+        central: the overall cards collection 
+    '''
+    pO = {'name': 'player one', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
+                 'discard': None}
+    pC = {'name': 'player computer', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
+               'discard': None}
+    central = {'name': 'central', 'active': None, 'activeSize': 5, 'supplement': None, 'deck': None}
+    
+    # initialize the detail information of each role
+    initData(pO, pC, central)
+    
+    # move card from deck to hand area
+    deck2hand(pO)
+    
+    # move card from deck to hand area
+    deck2hand(pC)
 
     print "Available Cards"
     for card in central['active']:
@@ -77,26 +155,23 @@ if __name__ == '__main__':
     if len(central['supplement']) > 0:
         print central['supplement'][0]
 
-
-
-    pG = raw_input('Do you want to play a game? y/N(default y):')
-    cG = (pG.lower()=='y' or pG=='')
-    oT = raw_input("Do you want an aggressive (A) opponent or an acquisative (Q) opponent")
-    aggressive = (oT.lower()=='a')
+    
+    cG,aggressive = checkInput(True)
+    
     while cG:
         money = 0
         attack = 0
         while True:
 
             print "\nPlayer Health %s" % pO['health']
-            print "Computer Health %s" % pC['health']
+            print "\nComputer Health %s" % pC['health']
 
             print "\nYour Hand"
             index = 0
             for card in pO['hand']:
                     print "[%s] %s" % (index, card)
                     index = index + 1
-            print "\nYour Values"
+            print "\n Your Values"
             print "Money %s, Attack %s" % (money, attack)
             print "\nChoose Action: (P = play all, [0-n] = play that card, B = Buy Card, A = Attack, E = end turn)"
 
